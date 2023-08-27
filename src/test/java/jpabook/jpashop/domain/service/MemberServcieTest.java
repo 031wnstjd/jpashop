@@ -1,7 +1,8 @@
 package jpabook.jpashop.domain.service;
 
 import jpabook.jpashop.domain.Member;
-import jpabook.jpashop.domain.repository.MemberRepository;
+import jpabook.jpashop.repository.MemberRepository;
+import jpabook.jpashop.service.MemberServcie;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,8 @@ import static org.junit.Assert.fail;
 @Transactional // Test case 수행 후 자동 Rollback
 public class MemberServcieTest {
 
-    @Autowired MemberServcie memberServcie;
+    @Autowired
+    MemberServcie memberServcie;
     @Autowired MemberRepository memberRepository;
 
     @Test

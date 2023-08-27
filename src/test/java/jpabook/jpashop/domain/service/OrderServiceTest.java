@@ -2,9 +2,10 @@ package jpabook.jpashop.domain.service;
 
 import jakarta.persistence.EntityManager;
 import jpabook.jpashop.domain.*;
-import jpabook.jpashop.domain.exception.NotEnoughStockException;
+import jpabook.jpashop.exception.NotEnoughStockException;
 import jpabook.jpashop.domain.item.Book;
-import jpabook.jpashop.domain.repository.OrderRepository;
+import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.service.OrderService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,8 @@ import static org.junit.Assert.*;
 public class OrderServiceTest {
 
     @Autowired EntityManager em;
-    @Autowired OrderService orderService;
+    @Autowired
+    OrderService orderService;
     @Autowired OrderRepository orderRepository;
 
     @Test

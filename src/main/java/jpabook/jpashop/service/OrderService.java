@@ -1,9 +1,10 @@
-package jpabook.jpashop.domain.service;
+package jpabook.jpashop.service;
 
 import jpabook.jpashop.domain.*;
-import jpabook.jpashop.domain.repository.ItemRepository;
-import jpabook.jpashop.domain.repository.MemberRepository;
-import jpabook.jpashop.domain.repository.OrderRepository;
+import jpabook.jpashop.repository.ItemRepository;
+import jpabook.jpashop.repository.MemberRepository;
+import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,7 @@ public class OrderService {
     /**
      * 주문
      */
-    @Transactional
+    @Transactional // 트랜잭션이 걸린 시점부터 영속성 컨텍스트가 새로 시작 됨 (Controller가 아닌 Service 로직에서 Entity를 조회해서 사용해야 하는 이유)
     public Long order(Long memberId, Long itemId, int count) {
         // 엔티티 조회
         Member member = memberRepository.findOne(memberId);
@@ -58,8 +59,8 @@ public class OrderService {
     /**
      * 검색
      */
-//    public List<Order> findOrders(OrderSearch orderSearch) {
-//        return orderRepository.findAll(orderSearch);
-//    }
+    public List<Order> findOrders(OrderSearch orderSearch) {
+        return orderRepository.findAllByString(orderSearch);
+    }
 
 }
