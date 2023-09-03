@@ -13,6 +13,7 @@ spring:
         #        show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
+#    open-in-view: false # DB 커넥션 반환 등의 성능 이슈를 해결하기 위해 open-in-view를 false로 설정.(하지만, 컨트롤러 단에서 지연로딩이 불가능해지므로 이를 고려해서 트랜잭션을 구성해야 함)
 
 logging:
   level:
