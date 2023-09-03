@@ -18,12 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
 
+/**
+ * 엔티티 조회 방식: V1, V2, V3, V3.1 (웬만하면 이 방식 접근. 성능이 안나오면 redis를 통한 DTO 캐싱 고려)
+ * DTO 직접 조회 방식: V4, V5, V6
+ */
 @RestController
 @RequiredArgsConstructor
 public class OrderApiController {
@@ -31,6 +32,9 @@ public class OrderApiController {
     private final OrderRepository orderRepository;
     private final OrderQueryRepository orderQueryRepository;
 
+    /**
+     * V1: 엔티티를 조회해서 그대로 반환
+     */
     @GetMapping("/api/v1/orders")
     public List<Order> ordersV1() {
         List<Order> all = orderRepository.findAllByString(new OrderSearch());
@@ -44,6 +48,9 @@ public class OrderApiController {
         return all;
     }
 
+    /**
+     * V2: 엔티티 조회 후 DTO로 변환
+     */
     @GetMapping("/api/v2/orders")
     public List<OrderDto> ordersV2() {
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
@@ -54,6 +61,9 @@ public class OrderApiController {
         return collect;
     }
 
+    /**
+     * V3: 페치 조인으로 실행 쿼리 수 최적화
+     */
     @GetMapping("/api/v3/orders")
     public List<OrderDto> ordersV3() {
         List<Order> orders = orderRepository.findAllWithItem();
@@ -64,6 +74,9 @@ public class OrderApiController {
         return collect;
     }
 
+    /**
+     * V3.1: 컬렉션 페이징과 한계 돌파
+     */
     @GetMapping("/api/v3.1/orders")
     public List<OrderDto> ordersV3_page(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
@@ -78,16 +91,25 @@ public class OrderApiController {
         return collect;
     }
 
+    /**
+     * V4: JPA에서 DTO를 직접 조회
+     */
     @GetMapping("/api/v4/orders")
     public List<OrderQueryDto> ordersV4() {
         return orderQueryRepository.findOrderQueryDtos();
     }
 
+    /**
+     * V5: 컬렉션 조회 최적화 - 일대다 관계인 컬렉션은 IN절을 활용해서 메모리에 미리 조회하여 최적화
+     */
     @GetMapping("/api/v5/orders")
     public List<OrderQueryDto> ordersV5() {
         return orderQueryRepository.findAllByDto_optimization();
     }
 
+    /**
+     * V6: 플랫 데이터 조회 최적화: JOIN 결과를 그대로 조회 후 애플리케이션에서 원하는 모양으로 직접 변환 
+     */
     @GetMapping("/api/v6/orders")
     public List<OrderQueryDto> ordersV6() {
         List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
