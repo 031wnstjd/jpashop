@@ -22,6 +22,8 @@ import java.util.List;
 import static java.util.stream.Collectors.*;
 
 /**
+ * xToMany(OneToMany, ManyToMany)
+ *
  * 엔티티 조회 방식: V1, V2, V3, V3.1 (웬만하면 이 방식 접근. 성능이 안나오면 redis를 통한 DTO 캐싱 고려)
  * DTO 직접 조회 방식: V4, V5, V6
  */
