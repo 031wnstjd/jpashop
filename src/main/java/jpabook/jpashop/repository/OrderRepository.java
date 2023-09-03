@@ -62,7 +62,40 @@ public class OrderRepository {
         return em.createQuery(
                 "select o from Order o" +
                         " join fetch o.member m" +
-                        " join fetch o.delivery d", Order.class
-        ).getResultList();
+                        " join fetch o.delivery d", Order.class)
+                .getResultList();
+    }
+
+    /**
+     * [일대다 fetch 조인 특징]
+     * - 일대다 관계를 fetch 조인(컬렉션 fetch 조인) 하는 경우, DB에서 데이터 뻥튀기가 발생한다.
+     *   이로 인해 JPA는 불가피하게 데이터를 메모리에 모두 올린 후 페이징 처리를 하게 되는데,
+     *   이는 OutOfMemoryError를 발생 시킬 수 있는 잠재적 위험 요소이다. (다대일 fetch 조인에서는 문제 없음)
+     *
+     * [distinct 연산자의 역할]
+     * - Hibernate 6버전부터는 페치 조인 사용 시 distinct를 사용하지 않아도 자동으로 중복 제거를 하도록 변경 됨
+     * 1. DB 쿼리에 DISTINCT 연산자를 추가해줌
+     * 2. 루트 엔티티(여기서는 Order)가 중복인 경우(==pk인 orderId 값이 동일)에, 그 중복을 걸러줌
+     */
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                "select distinct o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i", Order.class)
+                .setFirstResult(1)
+                .setMaxResults(100)
+                .getResultList();
+    }
+
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                        "select o from Order o" +
+                                " join fetch o.member m" +
+                                " join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
     }
 }

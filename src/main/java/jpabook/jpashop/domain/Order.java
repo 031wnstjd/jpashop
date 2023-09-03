@@ -23,10 +23,11 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY) // LAZY로 설정 되어 있으므로 기본적으로 맨 처음 proxyMember(ByteBuddyInterceptor()) 객체를 가져옴
     @JoinColumn(name = "member_id")
     private Member member;
 
+//    @BatchSize(size = 1000)
     @OneToMany(mappedBy = "order", cascade = ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
